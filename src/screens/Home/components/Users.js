@@ -4,7 +4,6 @@ import {
   ScrollView,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
@@ -74,63 +73,64 @@ export class Users extends React.Component {
     let {users} = this.state;
 
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          {users.map((user, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.item}
-                onPress={() => navigate('UserDetails', user)}>
-                <Text
-                  style={
-                    styles.text
-                  }>{`Go to ${user.name} ${user.surname}'s profile`}</Text>
-              </TouchableOpacity>
-            );
-          })}
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => {
-              this.setState({isModalVisible: true});
-            }}>
-            <Text style={{color: 'white', fontSize: 20, fontWeight: '500'}}>
-              +
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {/* Modal */}
-        <Modal isVisible={this.state.isModalVisible}>
-          <View style={styles.modal}>
-            <Form ref="form" type={User} options={options} />
-            <TouchableOpacity
-              style={styles.button}
-              underlayColor="#99d9f4"
-              onPress={this.onSubmit}>
-              <Text style={styles.buttonText}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, {backgroundColor: 'white'}]}
-              underlayColor="#99d9f4"
-              onPress={() => {
-                this.setState({isModalVisible: false});
-              }}>
-              <Text style={[styles.buttonText, {color: '#48BBEC'}]}>
-                Cancel
-              </Text>
-            </TouchableOpacity>
+      <View style={{height: Dimensions.get('window').height - 170}}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => {
+            this.setState({isModalVisible: true});
+          }}>
+          <Text style={{color: 'white', fontSize: 20, fontWeight: '500'}}>
+            +
+          </Text>
+        </TouchableOpacity>
+        <ScrollView>
+          <View style={styles.container}>
+            {users.map((user, index) => {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.item}
+                  onPress={() => navigate('UserDetails', user)}>
+                  <Text
+                    style={
+                      styles.text
+                    }>{`Go to ${user.name} ${user.surname}'s profile`}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
-        </Modal>
-      </ScrollView>
+
+          {/* Modal */}
+          <Modal isVisible={this.state.isModalVisible}>
+            <View style={styles.modal}>
+              <Form ref="form" type={User} options={options} />
+              <TouchableOpacity
+                style={styles.button}
+                underlayColor="#99d9f4"
+                onPress={this.onSubmit}>
+                <Text style={styles.buttonText}>Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, {backgroundColor: 'white'}]}
+                underlayColor="#99d9f4"
+                onPress={() => {
+                  this.setState({isModalVisible: false});
+                }}>
+                <Text style={[styles.buttonText, {color: '#48BBEC'}]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
     padding: 20,
-    height: Dimensions.get('window').height - 170,
   },
   item: {
     padding: 10,
@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
+    zIndex: 2,
     bottom: 20,
     right: 20,
     width: 60,
