@@ -10,6 +10,38 @@ import {
 } from 'react-native';
 
 import Modal from 'react-native-modal';
+import t from 'tcomb-form-native';
+
+const Form = t.form.Form;
+
+let options = {
+  auto: 'placeholders',
+  fields: {
+    name: {
+      autoFocus: true,
+      error: 'Insert a valid name',
+    },
+    surname: {
+      error: 'Insert a valid surname',
+    },
+    age: {
+      keyboardType: 'numeric',
+      error: 'Insert a valid age',
+    },
+    email: {
+      keyboardType: 'email-address',
+      autoCapitalize: false,
+      error: 'Insert a valid email',
+    },
+  },
+};
+
+let User = t.struct({
+  name: t.String,
+  surname: t.String,
+  age: t.Number,
+  email: t.String,
+});
 
 export class Users extends React.Component {
   static navigationOptions = {
@@ -26,6 +58,15 @@ export class Users extends React.Component {
       {name: 'Samir', surname: 'Dadashzade', age: 28, email: 'test@gmail.com'},
     ],
     isModalVisible: false,
+  };
+
+  onSubmit = () => {
+    let newUser = this.refs.form.getValue();
+    if (newUser) {
+      let users = this.state.users;
+      users.push(newUser);
+      this.setState({users: users, isModalVisible: false});
+    }
   };
 
   render() {
@@ -61,39 +102,23 @@ export class Users extends React.Component {
         {/* Modal */}
         <Modal isVisible={this.state.isModalVisible}>
           <View style={styles.modal}>
-            <View style={styles.content}>
-              <Text style={{textAlign: 'center', fontWeight: '700'}}>Add</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={'Enter your name...'}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder={'Enter your surname...'}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder={'Enter your age...'}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder={'Enter your email...'}
-              />
-            </View>
-            <View style={styles.footer}>
-              <TouchableOpacity
-                style={[styles.button, styles.cancel]}
-                onPress={() => {
-                  this.setState({isModalVisible: false});
-                }}>
-                <Text style={{color: '#007AFF', fontWeight: '700'}}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, styles.add]}>
-                <Text style={{color: 'white', fontWeight: '700'}}>Add</Text>
-              </TouchableOpacity>
-            </View>
+            <Form ref="form" type={User} options={options} />
+            <TouchableOpacity
+              style={styles.button}
+              underlayColor="#99d9f4"
+              onPress={this.onSubmit}>
+              <Text style={styles.buttonText}>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, {backgroundColor: 'white'}]}
+              underlayColor="#99d9f4"
+              onPress={() => {
+                this.setState({isModalVisible: false});
+              }}>
+              <Text style={[styles.buttonText, {color: '#48BBEC'}]}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
           </View>
         </Modal>
       </ScrollView>
@@ -105,7 +130,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     padding: 20,
-    height: Dimensions.get('window').height - 160,
+    height: Dimensions.get('window').height - 170,
   },
   item: {
     padding: 10,
@@ -134,42 +159,24 @@ const styles = StyleSheet.create({
     minHeight: 300,
     backgroundColor: 'white',
     borderRadius: 10,
+    padding: 20,
   },
-  content: {
-    flex: 7,
-    padding: 10,
-    paddingLeft: 30,
-    paddingRight: 30,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-  },
-  input: {
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: '#007AFF',
-  },
-  footer: {
-    flex: 1,
-    padding: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  buttonText: {
+    fontSize: 18,
+    color: 'white',
+    alignSelf: 'center',
   },
   button: {
-    width: '40%',
-    borderRadius: 10,
-    display: 'flex',
+    height: 36,
+    backgroundColor: '#48BBEC',
+    borderColor: '#48BBEC',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignSelf: 'stretch',
     justifyContent: 'center',
-    alignItems: 'center',
   },
   cancel: {
-    borderWidth: 1,
-    borderColor: '#007AFF',
     backgroundColor: 'white',
-  },
-  add: {
-    backgroundColor: '#007AFF',
   },
 });
