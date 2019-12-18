@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 
 import Modal from 'react-native-modal';
@@ -65,7 +66,22 @@ export class Users extends React.Component {
       let users = this.state.users;
       users.push(newUser);
       this.setState({users: users, isModalVisible: false});
+      Alert.alert('Success', 'New user succesfully added.', [
+        {
+          text: 'OK',
+        },
+      ]);
     }
+  };
+
+  onDelete = user => {
+    let users = this.state.users.filter(u => u !== user);
+    this.setState({users});
+    Alert.alert('Success', 'Selected user succesfully removed.', [
+      {
+        text: 'OK',
+      },
+    ]);
   };
 
   render() {
@@ -73,7 +89,8 @@ export class Users extends React.Component {
     let {users} = this.state;
 
     return (
-      <View style={{height: Dimensions.get('window').height - 170}}>
+      <View style={{flex: 1}}>
+        {/* Add Button */}
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
@@ -83,6 +100,7 @@ export class Users extends React.Component {
             +
           </Text>
         </TouchableOpacity>
+
         <ScrollView>
           <View style={styles.container}>
             {users.map((user, index) => {
@@ -90,7 +108,28 @@ export class Users extends React.Component {
                 <TouchableOpacity
                   key={index}
                   style={styles.item}
-                  onPress={() => navigate('UserDetails', user)}>
+                  onLongPress={() => {
+                    Alert.alert(
+                      'Delete',
+                      `Do you want to delete ${user.name} ${user.surname} ?`,
+                      [
+                        {
+                          text: 'Cancel',
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'OK',
+                          onPress: () => {
+                            this.onDelete(user);
+                          },
+                        },
+                      ],
+                      {cancelable: false},
+                    );
+                  }}
+                  onPress={() => {
+                    navigate('UserDetails', user);
+                  }}>
                   <Text
                     style={
                       styles.text
@@ -101,7 +140,11 @@ export class Users extends React.Component {
           </View>
 
           {/* Modal */}
-          <Modal isVisible={this.state.isModalVisible}>
+          <Modal
+            avoidKeyboard={true}
+            animationIn={'zoomIn'}
+            animationOut={'zoomOut'}
+            isVisible={this.state.isModalVisible}>
             <View style={styles.modal}>
               <Form ref="form" type={User} options={options} />
               <TouchableOpacity
