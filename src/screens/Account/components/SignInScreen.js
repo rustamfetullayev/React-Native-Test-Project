@@ -11,8 +11,9 @@ let options = {
   auto: 'placeholders',
   fields: {
     email: {
-      keyboardType: 'email-address',
       autoCapitalize: false,
+      autoFocus: true,
+      keyboardType: 'email-address',
       error: 'Insert a valid email',
     },
     password: {

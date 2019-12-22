@@ -1,4 +1,4 @@
 export * from './Home/HomeScreen';
 export * from './Map/MapScreen';
-export * from './Slider/SliderScreen';
+export * from './Post/PostScreen';
 export * from './Account/AccountScreen';

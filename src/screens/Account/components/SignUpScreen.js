@@ -18,8 +18,9 @@ let options = {
   auto: 'placeholders',
   fields: {
     email: {
-      keyboardType: 'email-address',
       autoCapitalize: false,
+      autoFocus: true,
+      keyboardType: 'email-address',
       error: 'Insert a valid email',
     },
     password: {
@@ -40,7 +41,7 @@ export class SignUpScreen extends React.Component {
     title: 'Sign Up',
   };
 
-  onSignUp = async () => {
+  onSignUp = () => {
     let newUser = this.refs.form.getValue();
     if (newUser) {
       globalFunctions._signUp(newUser);

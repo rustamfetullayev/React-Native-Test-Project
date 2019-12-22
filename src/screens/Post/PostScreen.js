@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {SliderBox} from 'react-native-image-slider-box';
 
-export class SliderScreen extends React.Component {
+export class PostScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

@@ -13,12 +13,7 @@ import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {globalFunctions} from './src/actions';
 import {users} from './src/storage';
 
-import {
-  HomeScreen,
-  MapScreen,
-  SliderScreen,
-  AccountScreen,
-} from './src/screens';
+import {HomeScreen, MapScreen, PostScreen, AccountScreen} from './src/screens';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -27,6 +22,8 @@ export default class App extends React.Component {
     this.state = {
       isAuthorized: false,
     };
+
+    console.disableYellowBox = true;
 
     globalFunctions.set({
       signUp: newUser => {
@@ -81,14 +78,12 @@ export default class App extends React.Component {
         : {
             Home: {screen: HomeScreen},
             Map: {screen: MapScreen},
-            Slider: {screen: SliderScreen},
+            Post: {screen: PostScreen},
           },
     );
 
-    const AppMain = createAppContainer(MainNavigator);
+    const AppContainer = createAppContainer(MainNavigator);
 
-    return <AppMain />;
+    return <AppContainer />;
   }
 }
-
-console.disableYellowBox = true;
