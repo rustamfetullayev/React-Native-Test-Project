@@ -6,14 +6,22 @@
  * @flow
  */
 import React from 'react';
-import {Alert} from 'react-native';
+import {Alert, AsyncStorage} from 'react-native';
 import {createAppContainer} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 
 import {globalFunctions} from './src/actions';
 import {users} from './src/storage';
 
-import {HomeScreen, MapScreen, PostScreen, AccountScreen} from './src/screens';
+import {
+  HomeScreen,
+  MapScreen,
+  PostScreen,
+  AccountScreen,
+  ProfileScreen,
+} from './src/screens';
+
+import {Loader} from './src/components';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -21,6 +29,7 @@ export default class App extends React.Component {
 
     this.state = {
       isAuthorized: false,
+      isLoading: true,
     };
 
     console.disableYellowBox = true;
@@ -35,13 +44,19 @@ export default class App extends React.Component {
             },
           ]);
         } else {
-          users.push(newUser);
-          this.setState({isAuthorized: true});
-          Alert.alert('Success', 'Welcome', [
-            {
-              text: 'OK',
-            },
-          ]);
+          AsyncStorage.setItem('user', JSON.stringify(newUser))
+            .then(response => {
+              users.push(newUser);
+              this.setState({isAuthorized: true});
+              Alert.alert('Success', 'Welcome', [
+                {
+                  text: 'OK',
+                },
+              ]);
+            })
+            .catch(error => {
+              Alert.alert('Error', error.message);
+            });
         }
       },
       signIn: user => {
@@ -50,12 +65,18 @@ export default class App extends React.Component {
         );
 
         if (selectedUser) {
-          this.setState({isAuthorized: true});
-          Alert.alert('Success', 'Welcome', [
-            {
-              text: 'OK',
-            },
-          ]);
+          AsyncStorage.setItem('user', JSON.stringify(selectedUser))
+            .then(response => {
+              this.setState({isAuthorized: true});
+              Alert.alert('Success', 'Welcome', [
+                {
+                  text: 'OK',
+                },
+              ]);
+            })
+            .catch(error => {
+              Alert.alert('Error', error.message);
+            });
         } else {
           Alert.alert('Warning', 'Username or password is wrong.', [
             {
@@ -64,11 +85,28 @@ export default class App extends React.Component {
           ]);
         }
       },
+      logOut: async () => {
+        let user = await AsyncStorage.getItem('user');
+
+        if (JSON.parse(user)) {
+          await AsyncStorage.removeItem('user');
+          this.setState({isAuthorized: false});
+        }
+      },
+    });
+  }
+
+  componentDidMount() {
+    AsyncStorage.getItem('user').then(respoonse => {
+      if (JSON.parse(respoonse)) {
+        this.setState({isAuthorized: true});
+      }
+      this.setState({isLoading: false});
     });
   }
 
   render() {
-    let {isAuthorized} = this.state;
+    let {isAuthorized, isLoading} = this.state;
 
     const MainNavigator = createBottomTabNavigator(
       !isAuthorized
@@ -79,11 +117,12 @@ export default class App extends React.Component {
             Home: {screen: HomeScreen},
             Map: {screen: MapScreen},
             Post: {screen: PostScreen},
+            Profile: {screen: ProfileScreen},
           },
     );
 
     const AppContainer = createAppContainer(MainNavigator);
 
-    return <AppContainer />;
+    return <>{isLoading ? <Loader /> : <AppContainer />}</>;
   }
 }
