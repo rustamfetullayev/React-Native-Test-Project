@@ -146,6 +146,7 @@ export class Users extends React.Component {
             animationOut={'zoomOut'}
             isVisible={this.state.isModalVisible}>
             <View style={styles.modal}>
+              <Text style={styles.modalTitle}>Add New User</Text>
               <Form ref="form" type={User} options={options} />
               <TouchableOpacity
                 style={styles.button}
@@ -204,6 +205,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '500',
+    marginBottom: 10,
+    alignSelf: 'center',
   },
   buttonText: {
     fontSize: 18,
